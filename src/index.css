@@ -81,3 +81,7 @@ h3 {
         margin-top: 25%;
     }
 }
+
+.errorMessage {
+    color: red;
+}

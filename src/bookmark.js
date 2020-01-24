@@ -7,7 +7,6 @@ const generateBookMarkElement = function (bookmark) {
   let bookmarkTitle = `<span class='js-title'>${bookmark.title}</span>`;
   let bookmarkRating = generateRatingElement(bookmark.rating);
   let bookmarkId = bookmark.id;
-  console.log(bookmarkId);
   if (bookmark.expanded === true) {
     return `
       <li  class="bookmarkItem" data-item-id="${bookmark.id}">
@@ -34,7 +33,6 @@ const generateRatingElement = function (rating) {
 };
 
 const generateBookMarkString = function(bookmark) {
-  console.log(bookmark);
   const bookmarks = bookmark.map((item) => generateBookMarkElement(item));
   return bookmarks.join('');
 };
@@ -53,6 +51,7 @@ const formTemplate = function() {
         <option value="5">Five</option>
       </select>
       <input type="submit" class='js-bookmark-submit'>
+      <p class='errorMessage'></p>
     </fieldset>
 
     </form>`;
@@ -60,7 +59,14 @@ const formTemplate = function() {
 const render = function () {
   if (store.adding === false) {
     let bookmarks = [...store.bookmarks];
-    const bookmarkString = generateBookMarkString(bookmarks);
+    let toRender = [];
+    let rateFilter = parseInt(getFilterValue());
+    for (let i = 0; i < bookmarks.length; i ++) {
+      if (bookmarks[i].rating <= rateFilter) {
+        toRender.push(bookmarks[i]);
+      }
+    }
+    const bookmarkString = generateBookMarkString(toRender);
     $('.js-bookmarks').html(bookmarkString);
   } else {
     let formString = formTemplate();
@@ -87,9 +93,13 @@ const handleAddBookMarkSubmit = function() {
       })
       .catch((error) => {
         store.setError(error.message);
+        outputError(store.error);
       });
   });
 
+};
+const outputError = function (error) {
+  $('.js-bookmarks').find('.errorMessage').append(`${error}`);
 };
 
 const handleAddBookMark = function () {
@@ -124,16 +134,27 @@ const getItemIdFromElement = function (item) {
     .data('item-id');
 };
 
+const getFilterValue = function () {
+  return $('.filterValue').val();
+};
+
+const handleFilterChange = function () {
+  $('.filterValue').change( function() {
+    store.filter = getFilterValue();
+    render();
+    console.log(store.filter);
+  });
+};
+
 const bindEventListeners = function () {
   handleAddBookMark();
   handleAddBookMarkSubmit();
   handleExpand();
   handleDelete();
+  handleFilterChange();
 };
 
-const getFilterValue = function () {
-  return $('.filterValue').val();
-};
+
 
 export default {
   render,
