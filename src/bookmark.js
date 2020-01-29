@@ -62,7 +62,7 @@ const render = function () {
     let toRender = [];
     let rateFilter = parseInt(getFilterValue());
     for (let i = 0; i < bookmarks.length; i ++) {
-      if (bookmarks[i].rating <= rateFilter) {
+      if (bookmarks[i].rating >= rateFilter) {
         toRender.push(bookmarks[i]);
       }
     }
@@ -124,6 +124,8 @@ const handleDelete = function() {
   $('.js-bookmarks').on('click', '.fa-trash', event => {
     const id = getItemIdFromElement(event.currentTarget);
     store.findAndDelete(id);
+    api.deleteBookmark(id);
+    console.log('deleted');
     render();
   });
 };

@@ -1,3 +1,5 @@
+import api from "./api";
+
 let bookmarks = [];
 let error = null;
 let filter = 0;
@@ -13,6 +15,7 @@ const addItem = function (bookmark) {
   
 const findAndDelete = function (id) {
   this.bookmarks = this.bookmarks.filter(currentItem => currentItem.id !== id);
+  api.deleteBookmark(id);
 };
 
 const toggleAdding = function () {
